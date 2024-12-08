@@ -1,0 +1,145 @@
+-- Find the total population of all villages in each Upazila
+SELECT UpazilaID, SUM(Population) AS TotalPopulation
+FROM Village
+GROUP BY UpazilaID;
+
+-- List the villages where the total land area is greater than 200
+SELECT Name, TotalLandArea
+FROM Village
+WHERE TotalLandArea > 200;
+
+-- Find the average literacy rate for each village and sort it in descending order
+SELECT VillageID, AVG(LiteracyRate) AS AverageLiteracy
+FROM Education
+GROUP BY VillageID
+ORDER BY AverageLiteracy DESC;
+
+-- Show the names of villages where the unemployment rate is less than 15%
+SELECT V.Name, E.UnemploymentRate
+FROM Village V
+JOIN EconomicCondition E ON V.VillageID = E.VillageID
+WHERE E.UnemploymentRate < 15;
+
+-- Find villages that have more than 1 school and list their name and school count
+SELECT V.Name, E.SchoolsCount
+FROM Village V
+JOIN Education E ON V.VillageID = E.VillageID
+WHERE E.SchoolsCount > 1;
+
+-- Find the number of villages in each district
+SELECT D.Name AS DistrictName, COUNT(V.VillageID) AS NumberOfVillages
+FROM District D
+JOIN Upazila U ON D.DistrictID = U.DistrictID
+JOIN Village V ON U.UpazilaID = V.UpazilaID
+GROUP BY D.Name;
+
+-- Display villages where Infrastructure capacity is more than 500 and order them by Capacity in descending order
+SELECT V.Name, I.Capacity
+FROM Village V
+JOIN Infrastructure I ON V.VillageID = I.VillageID
+WHERE I.Capacity > 500
+ORDER BY I.Capacity DESC;
+
+-- Find the average development score of each village and display only those with a score above 70
+SELECT V.Name, D.OverallDevelopmentScore
+FROM Village V
+JOIN DevelopmentSummary D ON V.VillageID = D.VillageID
+WHERE D.OverallDevelopmentScore > 70;
+
+-- Use a CASE statement to classify villages based on their population
+SELECT Name,
+CASE
+WHEN Population < 500 THEN 'Small'
+WHEN Population BETWEEN 500 AND 1000 THEN 'Medium'
+ELSE 'Large'
+END AS PopulationCategory
+FROM Village;
+ 
+-- Find villages that have both clean water and sanitation available
+SELECT V.Name
+FROM Village V
+JOIN WaterAndSanitation W ON V.VillageID = W.VillageID
+WHERE W.CleanWaterAvailability = 'Available' AND W.HouseholdSanitation = 'Basic Sanitation';
+
+-- List Districts with Low Development Index
+SELECT Name, DevelopmentIndex
+FROM District
+WHERE DevelopmentIndex < 50;
+
+-- List Upazilas with Low Infrastructure Index
+SELECT Name, InfrastructureIndex
+FROM Upazila
+WHERE InfrastructureIndex < 40;
+
+-- Villages with High Development Priority
+SELECT Name, DevelopmentPriority
+FROM Village
+WHERE DevelopmentPriority > 1;
+
+-- Villages with No Healthcare Facilities
+SELECT Village.Name
+FROM Village
+JOIN Healthcare ON Village.VillageID = Healthcare.VillageID
+WHERE Healthcare.FacilitiesCount = 0;
+
+-- Villages with No Clean Water Access
+SELECT Village.Name
+FROM Village
+JOIN WaterAndSanitation ON Village.VillageID = WaterAndSanitation.VillageID
+WHERE CleanWaterAvailability = 'Not Available';
+
+-- Upazilas with High Population and Economic Activity
+SELECT Name, Population, EconomicActivity
+FROM Upazila
+WHERE Population > 50000;
+
+-- Villages with Internet Coverage
+SELECT Village.Name, InternetCoverage
+FROM Village
+JOIN DigitalReadiness ON Village.VillageID = DigitalReadiness.VillageID;
+
+-- Districts with Highest Population Density
+SELECT Name, Population / Area AS PopulationDensity
+FROM District
+ORDER BY PopulationDensity DESC
+LIMIT 5;
+
+-- Villages with Low Literacy Rate
+SELECT Village.Name, LiteracyRate
+FROM Village
+JOIN Education ON Village.VillageID = Education.VillageID
+WHERE LiteracyRate < 60;
+
+-- Villages with High Unemployment Rate
+SELECT Village.Name, UnemploymentRate
+FROM Village
+JOIN EconomicCondition ON Village.VillageID = EconomicCondition.VillageID
+WHERE UnemploymentRate > 20;
+
+-- Villages with Non-functional Drainage System
+SELECT Village.Name
+FROM Village
+JOIN WaterAndSanitation ON Village.VillageID = WaterAndSanitation.VillageID
+WHERE DrainageSystem = 'Non-functional';
+
+-- Villages Prone to Natural Hazards
+SELECT Village.Name, NaturalHazards
+FROM Village
+JOIN AgricultureAndClimate ON Village.VillageID = AgricultureAndClimate.VillageID;
+
+-- Villages with Agriculture Potential
+SELECT Village.Name, HighYieldCrops, IrrigationFacilities
+FROM Village
+JOIN AgricultureAndClimate ON Village.VillageID = AgricultureAndClimate.VillageID;
+
+-- Summary of Villages with Major Challenges
+SELECT Village.Name, OverallDevelopmentScore, MajorChallenges
+FROM Village
+JOIN DevelopmentSummary ON Village.VillageID = DevelopmentSummary.VillageID
+WHERE OverallDevelopmentScore < 80;
+
+-- Villages with Recent Development Initiatives
+SELECT Village.Name, RecentInitiatives
+FROM Village
+JOIN DevelopmentSummary ON Village.VillageID = DevelopmentSummary.VillageID
+WHERE RecentInitiatives IS NOT NULL;
